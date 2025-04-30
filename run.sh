@@ -1,16 +1,35 @@
 #!/usr/bin/env bash
 
+ubuntu_version=$(lsb_release -rs)
+if [ "$ubuntu_version" != "22.04" ]; then
+  echo "This script only supports Ubuntu 22.04. Detected version: $ubuntu_version"
+  exit 1
+fi
+
 check_docker() {
   echo "Checking if Docker is installed..."
   if [ -x "$(command -v docker)" ]; then
     echo "Success! Docker is installed."
   else
-    echo "Docker is not installed. Please follow the instructions at: https://docs.docker.com/engine/install/debian to install Docker"
+    echo "Docker is not installed. Installing Docker..."
+    sudo apt update
+    sudo apt install -y apt-transport-https ca-certificates curl software-properties-common
+    curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg
+    echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+    sudo apt update
+    sudo apt install -y docker-ce
+
+    if [ -x "$(command -v docker)" ]; then
+      echo "Success! Docker has been installed."
+    else
+      echo "Docker installation failed. Please install Docker manually."
+      exit 1
+    fi
   fi
 }
 
 create_ros_ws() {
-  read -p "Please provide the filesystem path to your ROS workspace: " -e ros_ws_path
+  read -p "Please provide the filesystem path to your ROS workspace (ex. /home/your_username/avenic/): " -e ros_ws_path
   
   if [ ! -d $ros_ws_path ]; then
     read -p "$ros_ws_path does not exist. Would you like to create it? Enter 'y' to create the directory or 'n' to quit: " -e create_response
@@ -50,7 +69,23 @@ choose_gpu() {
     >&2 echo "The Nvidia container toolkit is installed, GPU support will be enabled."
     gpu="true"
   else
-    >&2 echo "the Nvidia container toolkit is not installed, GPU support will be disabled."
+    >&2 echo "The Nvidia container toolkit is not installed, GPU support will be disabled."
+    read -p "Would you like to install Nvidia Container Toolkit? (y/n) (do not install if your computer does not have a GPU): " -e install_nvidia
+    if [ "$install_nvidia" == "y" ]; then
+      curl -fsSL https://nvidia.github.io/libnvidia-container/gpgkey | sudo gpg --dearmor -o /usr/share/keyrings/nvidia-container-toolkit-keyring.gpg
+      curl -s -L https://nvidia.github.io/libnvidia-container/stable/deb/nvidia-container-toolkit.list | \
+        sed 's#deb https://#deb [signed-by=/usr/share/keyrings/nvidia-container-toolkit-keyring.gpg] https://#g' | \
+        sudo tee /etc/apt/sources.list.d/nvidia-container-toolkit.list
+      sudo sed -i -e '/experimental/ s/^#//g' /etc/apt/sources.list.d/nvidia-container-toolkit.list
+      sudo apt-get update
+      sudo apt-get install -y nvidia-container-toolkit
+      if dpkg -s nvidia-container-toolkit &>/dev/null; then
+        >&2 echo "Nvidia container toolkit installed successfully, GPU support will be enabled."
+        gpu="true"
+      else
+        >&2 echo "Failed to install Nvidia container toolkit, GPU support will be disabled."
+      fi
+    fi
   fi
 
   echo $gpu
