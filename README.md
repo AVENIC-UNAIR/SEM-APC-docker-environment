@@ -7,21 +7,9 @@ CARLA Version: `0.9.15`
 Supported ROS Versions: `ROS1 Noetic` `ROS2 Humble`
 
 ## First Time Container Setup
-1. Install Docker: <https://docs.docker.com/engine/install/debian>
-    
-    If your computer has a Nvidia GPU, you will also want to install the [Nvidia Container Toolkit](https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/latest/install-guide.html)
-    
-    - After installing the Nvidia container toolkit, you will need to restart the Docker daemon:
+1. Download/clone this repository:
 
-        `sudo systemctl restart docker`
-
-2. Add your user to the docker group so that you do not need to run all commands with sudo privileges. To make this modification, run the following command and log out and back into your computer:
-
-    `sudo usermod -aG docker $USER`
-
-3. Download/clone this repository:
-
-    `git clone https://github.com/swri-robotics/sem-apc-student-docker-environment.git`
+    `git clone https://github.com/alawyyahdan/sem-apc-docker-env.git`
 
 4. Navigate to the cloned repository directory and run the `run.sh` bash script. This will take you through the setup process for configuring your Docker environment. 
 
