@@ -13,7 +13,7 @@ Supported ROS Versions: `ROS1 Noetic` `ROS2 Humble`
 
 4. Navigate to the cloned repository directory and run the `run.sh` bash script. This will take you through the setup process for configuring your Docker environment. 
 
-    `cd sem-apc-docker-env`
+    `cd sem-apc-student-docker-environment`
     
     `./run.sh`
 
