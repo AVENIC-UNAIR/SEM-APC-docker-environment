@@ -21,13 +21,6 @@ check_docker() {
 
     if [ -x "$(command -v docker)" ]; then
       echo "Success! Docker has been installed."
-      if id -nG "$USER" | grep -qw docker; then
-        echo "User $USER is already in the docker group."
-      else
-        sudo usermod -aG docker $USER
-        echo "User $USER has been added to the docker group. Please log out and log in again for this to take effect."
-        exit 2
-      fi
     else
       echo "Docker installation failed. Please install Docker manually."
       exit 1
