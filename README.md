@@ -9,7 +9,7 @@ Supported ROS Versions: `ROS1 Noetic` `ROS2 Humble`
 ## First Time Container Setup
 1. Download/clone this repository:
 
-    `git clone https://github.com/AVENIC-UNAIR/sem-apc-docker-env.git`
+    `git clone https://github.com/alawyyahdan/sem-apc-docker-env.git`
 
 4. Navigate to the cloned repository directory and run the `run.sh` bash script. This will take you through the setup process for configuring your Docker environment. 
 
