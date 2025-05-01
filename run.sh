@@ -81,8 +81,7 @@ choose_gpu() {
       sudo apt-get install -y nvidia-container-toolkit
       if dpkg -s nvidia-container-toolkit &>/dev/null; then
         >&2 echo "Nvidia container toolkit installed successfully, GPU support will be enabled."
-        echo "Please run ./run.sh again after this."
-        exit 2
+        gpu="true"
       else
         >&2 echo "Failed to install Nvidia container toolkit, GPU support will be disabled."
       fi
@@ -127,6 +126,7 @@ create_docker() {
 
 # set -e
 check_docker
+gpu=$(choose_gpu)
 ros_ws_path=$(create_ros_ws)
 if [ $? == 1 ]; then
   echo "Exiting script."
@@ -137,5 +137,4 @@ if [ $? == 1 ]; then
   echo "Exiting script."
   exit 1
 fi
-gpu=$(choose_gpu)
 create_docker $ros_ws_path $gpu $selected_ros_version
